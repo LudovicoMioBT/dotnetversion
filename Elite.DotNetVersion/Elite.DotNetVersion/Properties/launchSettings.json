@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Elite.DotNetVersion": {
+      "commandName": "Project",
+      "commandLineArgs": "increment -s ..\\..\\..\\..\\Elite.DotNetVersion.sln -p Elite.DotNetVersion -l Build -c"
+    }
+  }
+}
