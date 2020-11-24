@@ -2,7 +2,7 @@
   "profiles": {
     "Elite.DotNetVersion": {
       "commandName": "Project",
-      "commandLineArgs": "increment -s ..\\..\\..\\..\\Elite.DotNetVersion.sln -p Elite.DotNetVersion -l Build -c"
+      "commandLineArgs": "number -v 1.2.3.18000"
     }
   }
 }

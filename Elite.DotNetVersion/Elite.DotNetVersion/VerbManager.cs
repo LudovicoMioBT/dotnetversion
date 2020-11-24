@@ -10,6 +10,7 @@ namespace Elite.DotNetVersion
         public static IEnumerable<Type> GetVerbs()
         {
             yield return typeof(EpochVerb.Options);
+            yield return typeof(VersionVerb.Options);
             yield return typeof(IncrementVerb.Options);
         }
     }
