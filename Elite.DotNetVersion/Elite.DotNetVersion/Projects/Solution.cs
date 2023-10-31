@@ -50,6 +50,7 @@ namespace Elite.DotNetVersion.Projects
         {
             var map = from prj in projects
                       where prj.ProjectType == SolutionProjectType.KnownToBeMSBuildFormat
+                      || prj.ProjectType == SolutionProjectType.Unknown
                       select ProjectMap.Create(prj);
 
             return Solution.FromMap(name, map);
