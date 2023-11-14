@@ -34,27 +34,33 @@ namespace Elite.DotNetVersion.Verbs
         {
             var solutionFile = SolutionFile.Parse(this.VerbOptions.SolutionFile.FullName);
             var solutionName = Path.GetFileNameWithoutExtension(this.VerbOptions.SolutionFile.FullName);
-
             Solution solution = Solution.FromProjects(solutionName, solutionFile.ProjectsInOrder);
-
             var projects = this.VerbOptions.Projects;
 
-            if (projects.Any())
+            var pendingChanges = PendingChanges.FromSolution(VerbOptions.SolutionFile.FullName);
+
+            if (!projects.Any())
             {
-                var projectsToChange = solution.FindDependentsByName(projects);
-
-                Epoch epoch = this.GetReleaseDate();
-
-                foreach (var project in projectsToChange)
-                    project.IncreaseVersion(this.VerbOptions.VersionLevel, epoch);
-
-                if (this.VerbOptions.Commit)
-                    this.Save(projectsToChange);
-
-                return this.OutputAsync(solutionName, projects, projectsToChange, epoch);
-            }
-            else
                 throw new ApplicationException("There isn't any project changed");
+            }
+
+            var projectsToChange = solution.FindDependentsByName(projects);
+
+            Epoch epoch = this.GetReleaseDate();
+
+            foreach (var project in projectsToChange)
+            {
+                project.IncreaseVersion(this.VerbOptions.VersionLevel, epoch);
+                pendingChanges.UpdateProject(project);
+            }
+
+            if (this.VerbOptions.Commit)
+            {
+                this.Save(projectsToChange);
+                UpdatePendingChanges(pendingChanges);
+            }
+
+            return this.OutputAsync(solutionName, projects, projectsToChange, epoch);
         }
 
         private Task OutputAsync(string solutionName, IEnumerable<string> projects, IEnumerable<Project> projectsToChange, Epoch epoch)
@@ -108,7 +114,44 @@ namespace Elite.DotNetVersion.Verbs
         private void Save(IEnumerable<Project> projectsToChange)
         {
             foreach (var prj in projectsToChange)
+            {
                 prj.CommitUpdatedVersionToFile();
+            }
+        }
+
+        private void UpdatePendingChanges(PendingChanges changes)
+        {
+            if (changes.NotPresent)
+            {
+                return;
+            }
+
+            string tempFile = Path.GetTempFileName();
+
+            using (var reader = File.OpenText(changes.FullPath))
+            {
+                using var writer = new StreamWriter(tempFile);
+                int currentRow = 0;
+
+                while (!reader.EndOfStream)
+                {
+                    var content = reader.ReadLine();
+                    currentRow++;
+
+                    if (currentRow < changes.BeginRow || currentRow > changes.EndRow)
+                    {
+                        writer.WriteLine(content);
+                    }
+
+                    if (currentRow == changes.BeginRow)
+                    {
+                        writer.Write(changes.ToString());
+                    }
+                }
+            }
+
+            File.Delete(changes.FullPath);
+            File.Move(tempFile, changes.FullPath);
         }
 
         [Verb("increment", HelpText = "increase version number of projects in solution")]

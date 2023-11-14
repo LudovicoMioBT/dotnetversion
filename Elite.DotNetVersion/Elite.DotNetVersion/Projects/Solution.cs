@@ -10,6 +10,14 @@ namespace Elite.DotNetVersion.Projects
     {
         public string Name { get; }
 
+        public IEnumerable<Project> Projects { get; }
+
+        private Solution(string name, IEnumerable<Project> projects)
+        {
+            this.Name = name;
+            this.Projects = projects;
+        }
+
         public IEnumerable<Project> FindByNames(IEnumerable<string> names)
         {
             return (from p in this.Projects
@@ -38,14 +46,6 @@ namespace Elite.DotNetVersion.Projects
             }
         }
 
-        public IEnumerable<Project> Projects { get; }
-
-        private Solution(string name, IEnumerable<Project> projects)
-        {
-            this.Name = name;
-            this.Projects = projects;
-        }
-
         public static Solution FromProjects(string name, IEnumerable<ProjectInSolution> projects)
         {
             var map = from prj in projects
@@ -70,7 +70,8 @@ namespace Elite.DotNetVersion.Projects
                 {
                     prj.Dependencies = (from dep in projects
                                         where item.ProjectReferences.Contains(dep.Name)
-                                        select dep).ToArray();
+                                        select dep)
+                                        .ToArray();
 
                     foreach (var by in prj.Dependencies)
                         by.AddDependsFrom(prj);
