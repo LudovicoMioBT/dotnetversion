@@ -32,7 +32,7 @@ namespace Elite.DotNetVersion
 
         private static void DisplayErrors(IEnumerable<Error> errors)
         {
-            foreach(var error in errors)
+            foreach (var error in errors)
                 Console.WriteLine(error);
         }
     }

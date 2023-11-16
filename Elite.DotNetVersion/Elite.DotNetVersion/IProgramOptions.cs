@@ -10,7 +10,7 @@ namespace Elite.DotNetVersion
     }
 
     abstract class ProgramOptions<T> : IProgramOptions
-        where T: IVerb
+        where T : IVerb
     {
         [Option('o', "output", Required = false, HelpText = "Type of output", Default = OutputType.Json)]
         public OutputType? Output { get; set; }

@@ -29,7 +29,7 @@ namespace Elite.DotNetVersion.Verbs
                 epoch = (Epoch)DateTime.Today;
 
             var formatter = FormatterFactory.Create(
-                this.VerbOptions.Output.GetValueOrDefault(OutputType.Json), 
+                this.VerbOptions.Output.GetValueOrDefault(OutputType.Json),
                 this.VerbOptions.Query);
 
             return formatter.WriteAsync(Console.Out, epoch);
