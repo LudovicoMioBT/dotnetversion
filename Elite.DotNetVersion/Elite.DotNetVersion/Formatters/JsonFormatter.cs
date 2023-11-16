@@ -3,26 +3,22 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Elite.DotNetVersion.Formatters
 {
-
-    class JsonFormatter : IFormatter
+    sealed class JsonFormatter : IFormatter
     {
-        public string Query { get; }
-
         public JsonFormatter(string query)
         {
             this.Query = query ?? string.Empty;
         }
 
-        public void Dispose()
-        { }
+        public string Query { get; }
+
+        public void Dispose() { }
 
         public async Task WriteAsync(TextWriter writer, object content)
         {
@@ -35,16 +31,18 @@ namespace Elite.DotNetVersion.Formatters
                     {
                         new VersionConverter(),
                         new FileInfoConverter()
-                    }).ToList()
+                    })
+                    .ToList()
                 };
 
                 var json = JsonConvert.SerializeObject(content, Formatting.Indented, settings);
 
                 if (string.IsNullOrEmpty(this.Query))
+                {
                     await writer.WriteLineAsync(json);
+                }
                 else
                 {
-
                     var jms = new JmesPath();
                     var result = jms.Transform(json, this.Query);
                     var tmp = JsonConvert.DeserializeObject(result);
@@ -75,5 +73,6 @@ namespace Elite.DotNetVersion.Formatters
                 writer.WriteValue(((FileInfo)value).FullName);
             }
         }
+
     }
 }

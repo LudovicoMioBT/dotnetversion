@@ -16,7 +16,9 @@ namespace Elite.DotNetVersion
                     .WithParsed<IProgramOptions>(o =>
                     {
                         if (o.Output != OutputType.Json)
-                            Console.WriteLine($"dotnetversion v{Assembly.GetExecutingAssembly().GetName().Version.ToString()}");
+                        {
+                            Console.WriteLine($"dotnetversion v{Assembly.GetExecutingAssembly().GetName().Version}");
+                        }
 
                         o.Create().RunAsync().Wait();
                     })

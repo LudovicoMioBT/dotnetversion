@@ -2,22 +2,18 @@
 using Elite.DotNetVersion.Formatters;
 using Elite.DotNetVersion.Projects;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Elite.DotNetVersion.Verbs
 {
     class VersionVerb : IVerb
     {
-        public Options VerbOptions { get; }
-
         public VersionVerb(Options options)
         {
             this.VerbOptions = options;
         }
+
+        public Options VerbOptions { get; }
 
         public Task RunAsync()
         {

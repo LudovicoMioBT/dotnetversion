@@ -6,16 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Elite.DotNetVersion.Verbs
 {
     class IncrementVerb : IVerb
     {
-
-        public Options VerbOptions { get; }
-
         public IncrementVerb(Options options)
         {
             if (!options.SolutionFile.Exists)
@@ -29,6 +25,8 @@ namespace Elite.DotNetVersion.Verbs
 
             this.VerbOptions = options;
         }
+
+        public Options VerbOptions { get; }
 
         public Task RunAsync()
         {

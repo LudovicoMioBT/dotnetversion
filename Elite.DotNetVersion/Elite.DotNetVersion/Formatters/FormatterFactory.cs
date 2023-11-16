@@ -1,5 +1,4 @@
-﻿using Elite.DotNetVersion;
-using System;
+﻿using System;
 
 namespace Elite.DotNetVersion.Formatters
 {

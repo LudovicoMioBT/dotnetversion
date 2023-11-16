@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -12,17 +11,6 @@ namespace Elite.DotNetVersion.Projects
 {
     class Project
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public FileInfo File { get; set; }
-        public bool UsesVersionPrefix { get; set; }
-        public Version Version { get; set; }
-        [JsonIgnore]
-        public Version NewVersion { get; set; }
-        public IEnumerable<Project> Dependencies { get; set; }
-        [JsonIgnore]
-        public IEnumerable<Project> Dependents { get; set; } = new List<Project>();
-
         public Project(ProjectMap item)
         {
             this.Id = item.Id;
@@ -32,6 +20,24 @@ namespace Elite.DotNetVersion.Projects
             this.Version = item.Version;
             this.NewVersion = item.Version;
         }
+
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public FileInfo File { get; set; }
+
+        public bool UsesVersionPrefix { get; set; }
+
+        public Version Version { get; set; }
+
+        [JsonIgnore]
+        public Version NewVersion { get; set; }
+
+        public IEnumerable<Project> Dependencies { get; set; }
+
+        [JsonIgnore]
+        public IEnumerable<Project> Dependents { get; set; } = new List<Project>();
 
         public override string ToString()
         {

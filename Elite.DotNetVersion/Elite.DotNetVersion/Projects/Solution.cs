@@ -8,15 +8,15 @@ namespace Elite.DotNetVersion.Projects
 {
     class Solution
     {
-        public string Name { get; }
-
-        public IEnumerable<Project> Projects { get; }
-
         private Solution(string name, IEnumerable<Project> projects)
         {
             this.Name = name;
             this.Projects = projects;
         }
+
+        public string Name { get; }
+
+        public IEnumerable<Project> Projects { get; }
 
         public IEnumerable<Project> FindByNames(IEnumerable<string> names)
         {

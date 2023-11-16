@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -14,12 +13,20 @@ namespace Elite.DotNetVersion.Projects
     {
         public static readonly Version NotVersionedVersion = new Version("0.0.0.0");
 
+        private ProjectMap() { }
+
         public string File { get; private set; }
+
         public string Name { get; private set; }
+
         public Guid Id { get; private set; }
+
         public Version Version { get; private set; }
+
         public bool UsesVersionPrefix { get; private set; }
+
         public IEnumerable<string> ProjectReferences { get; private set; }
+
         public IEnumerable<(string Name, string Version)> PackageReferences { get; private set; }
 
         public static ProjectMap Create(ProjectInSolution prj)
@@ -54,6 +61,7 @@ namespace Elite.DotNetVersion.Projects
             bool usesPrefix = !string.IsNullOrEmpty(versionPrefix);
             return (usesPrefix, new Version(usesPrefix ? versionPrefix : version));
         }
+
         private static IEnumerable<string> ExtractProjects(IEnumerable<XElement> enumerable)
         {
             return from item in enumerable
@@ -67,9 +75,6 @@ namespace Elite.DotNetVersion.Projects
         }
 
         public bool IsVersioned => this.Version != ProjectMap.NotVersionedVersion;
-
-        private ProjectMap()
-        { }
 
         public override string ToString()
         {

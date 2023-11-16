@@ -1,17 +1,12 @@
 ﻿using CommandLine;
 using Elite.DotNetVersion.Formatters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Elite.DotNetVersion.Verbs
 {
     class EpochVerb : IVerb
     {
-        public Options VerbOptions { get; }
-
         public EpochVerb(Options options)
         {
             if (options.RevisionDate.HasValue && options.RevisionNumber != 0)
@@ -19,6 +14,8 @@ namespace Elite.DotNetVersion.Verbs
 
             this.VerbOptions = options;
         }
+
+        public Options VerbOptions { get; }
 
         public Task RunAsync()
         {
