@@ -1,4 +1,5 @@
 ﻿using DevLab.JmesPath;
+using Elite.DotNetVersion.Domain.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -7,13 +8,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Elite.DotNetVersion.Formatters
+namespace Elite.DotNetVersion.Infrastructure.Formatters
 {
     sealed class JsonFormatter : IFormatter
     {
         public JsonFormatter(string query)
         {
-            this.Query = query ?? string.Empty;
+            Query = query ?? string.Empty;
         }
 
         public string Query { get; }
@@ -37,14 +38,14 @@ namespace Elite.DotNetVersion.Formatters
 
                 var json = JsonConvert.SerializeObject(content, Formatting.Indented, settings);
 
-                if (string.IsNullOrEmpty(this.Query))
+                if (string.IsNullOrEmpty(Query))
                 {
                     await writer.WriteLineAsync(json);
                 }
                 else
                 {
                     var jms = new JmesPath();
-                    var result = jms.Transform(json, this.Query);
+                    var result = jms.Transform(json, Query);
                     var tmp = JsonConvert.DeserializeObject(result);
                     await writer.WriteAsync(JsonConvert.SerializeObject(tmp, Formatting.Indented, settings));
                 }

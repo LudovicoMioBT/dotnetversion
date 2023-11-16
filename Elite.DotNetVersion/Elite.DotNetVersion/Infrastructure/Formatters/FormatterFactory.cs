@@ -1,6 +1,8 @@
 ﻿using System;
+using Elite.DotNetVersion.Domain.Enums;
+using Elite.DotNetVersion.Domain.Interfaces;
 
-namespace Elite.DotNetVersion.Formatters
+namespace Elite.DotNetVersion.Infrastructure.Formatters
 {
     static class FormatterFactory
     {

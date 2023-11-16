@@ -1,9 +1,12 @@
 ﻿using CommandLine;
-using Elite.DotNetVersion.Formatters;
+using Elite.DotNetVersion.Domain.Entities;
+using Elite.DotNetVersion.Domain.Enums;
+using Elite.DotNetVersion.Domain.Interfaces;
+using Elite.DotNetVersion.Infrastructure.Formatters;
 using System;
 using System.Threading.Tasks;
 
-namespace Elite.DotNetVersion.Verbs
+namespace Elite.DotNetVersion.Application.Verbs
 {
     class EpochVerb : IVerb
     {
@@ -12,7 +15,7 @@ namespace Elite.DotNetVersion.Verbs
             if (options.RevisionDate.HasValue && options.RevisionNumber != 0)
                 throw new ApplicationException($"RevisionDate and RevisionNumber are mutually exclusive");
 
-            this.VerbOptions = options;
+            VerbOptions = options;
         }
 
         public Options VerbOptions { get; }
@@ -21,16 +24,16 @@ namespace Elite.DotNetVersion.Verbs
         {
             Epoch epoch;
 
-            if (this.VerbOptions.RevisionDate.HasValue)
-                epoch = (Epoch)this.VerbOptions.RevisionDate;
-            else if (this.VerbOptions.RevisionNumber != 0)
-                epoch = (Epoch)this.VerbOptions.RevisionNumber;
+            if (VerbOptions.RevisionDate.HasValue)
+                epoch = (Epoch)VerbOptions.RevisionDate;
+            else if (VerbOptions.RevisionNumber != 0)
+                epoch = (Epoch)VerbOptions.RevisionNumber;
             else
                 epoch = (Epoch)DateTime.Today;
 
             var formatter = FormatterFactory.Create(
-                this.VerbOptions.Output.GetValueOrDefault(OutputType.Json),
-                this.VerbOptions.Query);
+                VerbOptions.Output.GetValueOrDefault(OutputType.Json),
+                VerbOptions.Query);
 
             return formatter.WriteAsync(Console.Out, epoch);
         }

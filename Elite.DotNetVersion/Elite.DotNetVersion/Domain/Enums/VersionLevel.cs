@@ -1,4 +1,4 @@
-﻿namespace Elite.DotNetVersion.Projects
+﻿namespace Elite.DotNetVersion.Domain.Enums
 {
     public enum VersionLevel
     {

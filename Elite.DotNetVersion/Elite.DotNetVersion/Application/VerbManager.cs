@@ -1,8 +1,8 @@
-﻿using Elite.DotNetVersion.Verbs;
+﻿using Elite.DotNetVersion.Application.Verbs;
 using System;
 using System.Collections.Generic;
 
-namespace Elite.DotNetVersion
+namespace Elite.DotNetVersion.Application
 {
     static class VerbManager
     {

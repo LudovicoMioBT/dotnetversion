@@ -1,6 +1,8 @@
 ﻿using CommandLine;
-using Elite.DotNetVersion.Formatters;
-using Elite.DotNetVersion.Projects;
+using Elite.DotNetVersion.Domain.Entities;
+using Elite.DotNetVersion.Domain.Enums;
+using Elite.DotNetVersion.Domain.Interfaces;
+using Elite.DotNetVersion.Infrastructure.Formatters;
 using Microsoft.Build.Construction;
 using System;
 using System.Collections.Generic;
@@ -8,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Elite.DotNetVersion.Verbs
+namespace Elite.DotNetVersion.Application.Verbs
 {
     class IncrementVerb : IVerb
     {
@@ -23,17 +25,17 @@ namespace Elite.DotNetVersion.Verbs
             if (options.Projects == null)
                 throw new ApplicationException($"Please specify a list of projects separated by space using -p (--projects) option");
 
-            this.VerbOptions = options;
+            VerbOptions = options;
         }
 
         public Options VerbOptions { get; }
 
         public Task RunAsync()
         {
-            var solutionFile = SolutionFile.Parse(this.VerbOptions.SolutionFile.FullName);
-            var solutionName = Path.GetFileNameWithoutExtension(this.VerbOptions.SolutionFile.FullName);
+            var solutionFile = SolutionFile.Parse(VerbOptions.SolutionFile.FullName);
+            var solutionName = Path.GetFileNameWithoutExtension(VerbOptions.SolutionFile.FullName);
             Solution solution = Solution.FromProjects(solutionName, solutionFile.ProjectsInOrder);
-            var projects = this.VerbOptions.Projects;
+            var projects = VerbOptions.Projects;
 
             var pendingChanges = PendingChanges.FromSolution(VerbOptions.SolutionFile.FullName);
 
@@ -44,28 +46,28 @@ namespace Elite.DotNetVersion.Verbs
 
             var projectsToChange = solution.FindDependentsByName(projects);
 
-            Epoch epoch = this.GetReleaseDate();
+            Epoch epoch = GetReleaseDate();
 
             foreach (var project in projectsToChange)
             {
-                project.IncreaseVersion(this.VerbOptions.VersionLevel, epoch);
+                project.IncreaseVersion(VerbOptions.VersionLevel, epoch);
                 pendingChanges.UpdateProject(project);
             }
 
-            if (this.VerbOptions.Commit)
+            if (VerbOptions.Commit)
             {
-                this.Save(projectsToChange);
+                Save(projectsToChange);
                 UpdatePendingChanges(pendingChanges);
             }
 
-            return this.OutputAsync(solutionName, projects, projectsToChange, epoch);
+            return OutputAsync(solutionName, projects, projectsToChange, epoch);
         }
 
         private Task OutputAsync(string solutionName, IEnumerable<string> projects, IEnumerable<Project> projectsToChange, Epoch epoch)
         {
             var formatter = FormatterFactory.Create(
-                this.VerbOptions.Output.GetValueOrDefault(OutputType.Json),
-                this.VerbOptions.Query);
+                VerbOptions.Output.GetValueOrDefault(OutputType.Json),
+                VerbOptions.Query);
 
             dynamic result = new
             {
@@ -78,19 +80,19 @@ namespace Elite.DotNetVersion.Verbs
                            }).ToArray(),
                 request = new
                 {
-                    commited = this.VerbOptions.Commit,
+                    commited = VerbOptions.Commit,
                     revision = epoch,
                     level = new
                     {
-                        number = this.VerbOptions.VersionLevel,
-                        name = this.VerbOptions.VersionLevel.ToString()
+                        number = VerbOptions.VersionLevel,
+                        name = VerbOptions.VersionLevel.ToString()
                     },
                     solution = new
                     {
                         name = solutionName,
-                        file = this.VerbOptions.SolutionFile
+                        file = VerbOptions.SolutionFile
                     },
-                    projects = projects
+                    projects
                 }
             };
 
@@ -101,10 +103,10 @@ namespace Elite.DotNetVersion.Verbs
         {
             Epoch reldate;
 
-            if (this.VerbOptions.EpochDate.HasValue)
-                reldate = this.VerbOptions.EpochDate.Value;
+            if (VerbOptions.EpochDate.HasValue)
+                reldate = VerbOptions.EpochDate.Value;
             else
-                reldate = this.VerbOptions.EpochNumber == 0 ? (Epoch)DateTime.Now : (Epoch)this.VerbOptions.EpochNumber;
+                reldate = VerbOptions.EpochNumber == 0 ? (Epoch)DateTime.Now : (Epoch)VerbOptions.EpochNumber;
 
             return reldate;
         }

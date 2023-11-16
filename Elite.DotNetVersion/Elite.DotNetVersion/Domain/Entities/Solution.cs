@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Elite.DotNetVersion.Projects
+namespace Elite.DotNetVersion.Domain.Entities
 {
     class Solution
     {
         private Solution(string name, IEnumerable<Project> projects)
         {
-            this.Name = name;
-            this.Projects = projects;
+            Name = name;
+            Projects = projects;
         }
 
         public string Name { get; }
@@ -20,14 +20,14 @@ namespace Elite.DotNetVersion.Projects
 
         public IEnumerable<Project> FindByNames(IEnumerable<string> names)
         {
-            return (from p in this.Projects
+            return (from p in Projects
                     where names.Contains(p.Name)
                     select p).ToArray();
         }
 
         public IEnumerable<Project> FindDependentsByName(IEnumerable<string> projects)
         {
-            var found = this.FindByNames(projects);
+            var found = FindByNames(projects);
 
             if (found != null)
                 return FindDependentsByName(found).Distinct();
@@ -53,7 +53,7 @@ namespace Elite.DotNetVersion.Projects
                       || prj.ProjectType == SolutionProjectType.Unknown
                       select ProjectMap.Create(prj);
 
-            return Solution.FromMap(name, map);
+            return FromMap(name, map);
         }
 
         public static Solution FromMap(string name, IEnumerable<ProjectMap> map)
@@ -83,23 +83,23 @@ namespace Elite.DotNetVersion.Projects
 
         public override string ToString()
         {
-            return this.ToString(-1);
+            return ToString(-1);
         }
 
         public string ToString(int maxDepth)
         {
-            return this.ToString(maxDepth, "");
+            return ToString(maxDepth, "");
         }
 
         public string ToString(int maxDepth, string indent = "")
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.AppendLine(this.Name);
+            builder.AppendLine(Name);
 
             if (maxDepth != 0)
             {
-                foreach (var item in this.Projects)
+                foreach (var item in Projects)
                     builder.Append(item.ToString(maxDepth - 1, indent + "  |"));
             }
 

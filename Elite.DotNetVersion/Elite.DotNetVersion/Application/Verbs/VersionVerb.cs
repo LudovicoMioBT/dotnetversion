@@ -1,26 +1,28 @@
 ﻿using CommandLine;
-using Elite.DotNetVersion.Formatters;
-using Elite.DotNetVersion.Projects;
+using Elite.DotNetVersion.Domain.Entities;
+using Elite.DotNetVersion.Domain.Enums;
+using Elite.DotNetVersion.Domain.Interfaces;
+using Elite.DotNetVersion.Infrastructure.Formatters;
 using System;
 using System.Threading.Tasks;
 
-namespace Elite.DotNetVersion.Verbs
+namespace Elite.DotNetVersion.Application.Verbs
 {
     class VersionVerb : IVerb
     {
         public VersionVerb(Options options)
         {
-            this.VerbOptions = options;
+            VerbOptions = options;
         }
 
         public Options VerbOptions { get; }
 
         public Task RunAsync()
         {
-            var date = this.VerbOptions.Date.GetValueOrDefault(DateTime.Today);
+            var date = VerbOptions.Date.GetValueOrDefault(DateTime.Today);
             var epoch = (Epoch)date;
-            var version = this.VerbOptions.Number ?? new Version("1.0.0.0");
-            var level = this.VerbOptions.VersionLevel;
+            var version = VerbOptions.Number ?? new Version("1.0.0.0");
+            var level = VerbOptions.VersionLevel;
 
             Version result = null;
 
@@ -34,8 +36,8 @@ namespace Elite.DotNetVersion.Verbs
                 result = new Version(version.Major + 1, 0, 0, epoch);
 
             var formatter = FormatterFactory.Create(
-                this.VerbOptions.Output.GetValueOrDefault(OutputType.Json),
-                this.VerbOptions.Query);
+                VerbOptions.Output.GetValueOrDefault(OutputType.Json),
+                VerbOptions.Query);
 
             return formatter.WriteAsync(Console.Out, new
             {
@@ -44,10 +46,10 @@ namespace Elite.DotNetVersion.Verbs
                 Month = date.ToString("MM"),
                 Day = date.ToString("dd"),
                 Number = result.ToString(),
-                Major = result.Major,
-                Minor = result.Minor,
-                Build = result.Build,
-                Revision = result.Revision
+                result.Major,
+                result.Minor,
+                result.Build,
+                result.Revision
             });
         }
 

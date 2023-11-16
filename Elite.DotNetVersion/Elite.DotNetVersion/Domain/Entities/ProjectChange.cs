@@ -1,4 +1,4 @@
-﻿namespace Elite.DotNetVersion.Projects
+﻿namespace Elite.DotNetVersion.Domain.Entities
 {
     internal class ProjectChange
     {

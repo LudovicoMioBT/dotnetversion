@@ -1,4 +1,4 @@
-﻿namespace Elite.DotNetVersion
+﻿namespace Elite.DotNetVersion.Domain.Enums
 {
     enum OutputType
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Elite.DotNetVersion
+namespace Elite.DotNetVersion.Domain.Entities
 {
     class Epoch
     {
@@ -12,29 +12,29 @@ namespace Elite.DotNetVersion
 
         public Epoch()
         {
-            this.Set(DateTime.Today);
+            Set(DateTime.Today);
         }
 
         public Epoch(DateTime date)
         {
-            this.Set(date.Date);
+            Set(date.Date);
         }
 
         public Epoch(int number)
         {
-            this.Set(number);
+            Set(number);
         }
 
         private void Set(DateTime date)
         {
-            this.Date = date.Date;
-            this.Number = (int)date.Subtract(Epoch.ReferralDate).TotalDays;
+            Date = date.Date;
+            Number = (int)date.Subtract(ReferralDate).TotalDays;
         }
 
         private void Set(int number)
         {
-            this.Date = Epoch.ReferralDate.AddDays(number).Date;
-            this.Number = number;
+            Date = ReferralDate.AddDays(number).Date;
+            Number = number;
         }
 
         public static implicit operator DateTime(Epoch date)

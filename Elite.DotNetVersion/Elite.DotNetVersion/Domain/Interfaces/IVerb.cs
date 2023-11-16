@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Elite.DotNetVersion
+namespace Elite.DotNetVersion.Domain.Interfaces
 {
     interface IVerb
     {

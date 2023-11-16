@@ -7,7 +7,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace Elite.DotNetVersion.Projects
+namespace Elite.DotNetVersion.Domain.Entities
 {
     class ProjectMap
     {
@@ -48,15 +48,15 @@ namespace Elite.DotNetVersion.Projects
                 Name = prj.ProjectName,
                 Version = version.version,
                 UsesVersionPrefix = version.usesPrefix,
-                ProjectReferences = ProjectMap.ExtractProjects(pRefs).ToArray(),
-                PackageReferences = ProjectMap.ExtractPackages(nRefs).ToArray(),
+                ProjectReferences = ExtractProjects(pRefs).ToArray(),
+                PackageReferences = ExtractPackages(nRefs).ToArray(),
             };
         }
 
         private static (bool usesPrefix, Version version) GetVersion(string versionPrefix, string version)
         {
             if (string.IsNullOrEmpty(version) && string.IsNullOrEmpty(versionPrefix))
-                return (false, ProjectMap.NotVersionedVersion);
+                return (false, NotVersionedVersion);
 
             bool usesPrefix = !string.IsNullOrEmpty(versionPrefix);
             return (usesPrefix, new Version(usesPrefix ? versionPrefix : version));
@@ -71,14 +71,14 @@ namespace Elite.DotNetVersion.Projects
         private static IEnumerable<(string Name, string Version)> ExtractPackages(IEnumerable<XElement> enumerable)
         {
             return from item in enumerable
-                   select (Name: item.Attribute("Include").Value, Version: item.Attribute("Version")?.Value ?? ProjectMap.NotVersionedVersion.ToString());
+                   select (Name: item.Attribute("Include").Value, Version: item.Attribute("Version")?.Value ?? NotVersionedVersion.ToString());
         }
 
-        public bool IsVersioned => this.Version != ProjectMap.NotVersionedVersion;
+        public bool IsVersioned => Version != NotVersionedVersion;
 
         public override string ToString()
         {
-            return $"{this.Id} | {this.Name} | {this.Version} | {this.ProjectReferences.Count()}";
+            return $"{Id} | {Name} | {Version} | {ProjectReferences.Count()}";
         }
     }
 }

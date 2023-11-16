@@ -1,7 +1,8 @@
 ﻿using CommandLine;
+using Elite.DotNetVersion.Domain.Enums;
 using System;
 
-namespace Elite.DotNetVersion
+namespace Elite.DotNetVersion.Domain.Interfaces
 {
     interface IProgramOptions
     {

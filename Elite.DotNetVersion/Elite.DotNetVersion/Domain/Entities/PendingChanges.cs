@@ -3,13 +3,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Elite.DotNetVersion.Projects
+namespace Elite.DotNetVersion.Domain.Entities
 {
     internal class PendingChanges
     {
         private readonly List<ProjectChange> changedProjects;
 
-        public PendingChanges()
+        private PendingChanges()
         {
             changedProjects = new List<ProjectChange>();
         }
@@ -69,15 +69,14 @@ namespace Elite.DotNetVersion.Projects
         internal void UpdateProject(Project project)
         {
             var change = changedProjects.Find(x => x.Name == project.Name);
+            var version = project.NewVersion != null ? project.NewVersion : project.Version;
 
             if (change != null)
             {
-                var version = project.NewVersion != null ? project.NewVersion : project.Version;
                 change.Version = $"{version.Major}.{version.Minor}.{version.Build}.<EPOCH>";
             }
             else
             {
-                var version = project.NewVersion != null ? project.NewVersion : project.Version;
                 changedProjects.Add(new ProjectChange()
                 {
                     Name = project.Name,

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Elite.DotNetVersion.Formatters
+namespace Elite.DotNetVersion.Domain.Interfaces
 {
     interface IFormatter : IDisposable
     {

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Elite.DotNetVersion.Domain.Enums;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,18 +8,18 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace Elite.DotNetVersion.Projects
+namespace Elite.DotNetVersion.Domain.Entities
 {
     class Project
     {
         public Project(ProjectMap item)
         {
-            this.Id = item.Id;
-            this.Name = item.Name;
-            this.File = new FileInfo(item.File);
-            this.UsesVersionPrefix = item.UsesVersionPrefix;
-            this.Version = item.Version;
-            this.NewVersion = item.Version;
+            Id = item.Id;
+            Name = item.Name;
+            File = new FileInfo(item.File);
+            UsesVersionPrefix = item.UsesVersionPrefix;
+            Version = item.Version;
+            NewVersion = item.Version;
         }
 
         public Guid Id { get; set; }
@@ -41,12 +42,12 @@ namespace Elite.DotNetVersion.Projects
 
         public override string ToString()
         {
-            return this.ToString(-1);
+            return ToString(-1);
         }
 
         public string ToString(int maxDepth)
         {
-            return this.ToString(maxDepth, "");
+            return ToString(maxDepth, "");
         }
 
         public string ToString(int maxDepth, string indent = "")
@@ -55,12 +56,12 @@ namespace Elite.DotNetVersion.Projects
 
             if (maxDepth != 0)
             {
-                if (this.Version == this.NewVersion)
-                    builder.AppendLine($"{indent}--{this.Name} ({this.Version})");
+                if (Version == NewVersion)
+                    builder.AppendLine($"{indent}--{Name} ({Version})");
                 else
-                    builder.AppendLine($"{indent}--{this.Name} ({this.Version} => {this.NewVersion})");
+                    builder.AppendLine($"{indent}--{Name} ({Version} => {NewVersion})");
 
-                foreach (var item in this.Dependencies)
+                foreach (var item in Dependencies)
                     builder.Append(item.ToString(maxDepth - 1, indent + "  |"));
             }
 
@@ -69,45 +70,45 @@ namespace Elite.DotNetVersion.Projects
 
         internal void CommitUpdatedVersionToFile()
         {
-            XDocument document = XDocument.Load(this.File.FullName);
+            XDocument document = XDocument.Load(File.FullName);
 
             var namespaceManager = new XmlNamespaceManager(new NameTable());
 
-            var version = this.UsesVersionPrefix ?
+            var version = UsesVersionPrefix ?
                 document.XPathSelectElement("/Project/PropertyGroup/VersionPrefix", namespaceManager) :
                 document.XPathSelectElement("/Project/PropertyGroup/Version", namespaceManager);
 
-            version.Value = this.NewVersion.ToString();
-            document.Save(this.File.FullName);
-            this.Commit();
+            version.Value = NewVersion.ToString();
+            document.Save(File.FullName);
+            Commit();
         }
 
         internal void IncreaseVersion(VersionLevel level, int revision, bool recursive = false)
         {
             if (level == VersionLevel.Revision)
-                this.NewVersion = new Version(this.Version.Major, this.Version.Minor, this.Version.Build, revision);
+                NewVersion = new Version(Version.Major, Version.Minor, Version.Build, revision);
             else if (level == VersionLevel.Build)
-                this.NewVersion = new Version(this.Version.Major, this.Version.Minor, this.Version.Build + 1, revision);
+                NewVersion = new Version(Version.Major, Version.Minor, Version.Build + 1, revision);
             else if (level == VersionLevel.Minor)
-                this.NewVersion = new Version(this.Version.Major, this.Version.Minor + 1, 0, revision);
+                NewVersion = new Version(Version.Major, Version.Minor + 1, 0, revision);
             else if (level == VersionLevel.Major)
-                this.NewVersion = new Version(this.Version.Major + 1, 0, 0, revision);
+                NewVersion = new Version(Version.Major + 1, 0, 0, revision);
 
             if (recursive)
             {
-                foreach (var dep in this.Dependents)
+                foreach (var dep in Dependents)
                     dep.IncreaseVersion(level, revision, recursive);
             }
         }
 
         public void Rollback()
         {
-            this.NewVersion = this.Version;
+            NewVersion = Version;
         }
 
         public void Commit()
         {
-            this.Version = this.NewVersion;
+            Version = NewVersion;
         }
 
         [JsonIgnore]
@@ -115,13 +116,13 @@ namespace Elite.DotNetVersion.Projects
         {
             get
             {
-                return this.Version != this.NewVersion;
+                return Version != NewVersion;
             }
         }
 
         internal void AddDependsFrom(Project prj)
         {
-            var deps = this.Dependents as IList<Project>;
+            var deps = Dependents as IList<Project>;
             deps.Add(prj);
         }
     }

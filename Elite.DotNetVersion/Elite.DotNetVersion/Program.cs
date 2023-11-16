@@ -1,4 +1,7 @@
 ﻿using CommandLine;
+using Elite.DotNetVersion.Application;
+using Elite.DotNetVersion.Domain.Enums;
+using Elite.DotNetVersion.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
