@@ -20,9 +20,9 @@ namespace Elite.DotNetVersion.Domain.Entities
 
         public IEnumerable<Project> FindByNames(IEnumerable<string> names)
         {
-            return (from p in Projects
-                    where names.Contains(p.Name)
-                    select p).ToArray();
+            return Projects
+                   .Where(p => names.Contains(p.Name))
+                   .ToArray();
         }
 
         public IEnumerable<Project> FindDependentsByName(IEnumerable<string> projects)
@@ -48,34 +48,35 @@ namespace Elite.DotNetVersion.Domain.Entities
 
         public static Solution FromProjects(string name, IEnumerable<ProjectInSolution> projects)
         {
-            var map = from prj in projects
-                      where prj.ProjectType == SolutionProjectType.KnownToBeMSBuildFormat
-                      || prj.ProjectType == SolutionProjectType.Unknown
-                      select ProjectMap.Create(prj);
+            var map = projects
+                      .Where(x => x.ProjectType == SolutionProjectType.KnownToBeMSBuildFormat || x.ProjectType == SolutionProjectType.Unknown)
+                      .Select(x => ProjectMap.Create(x));
 
             return FromMap(name, map);
         }
 
         public static Solution FromMap(string name, IEnumerable<ProjectMap> map)
         {
-            IEnumerable<Project> projects = (from item in map
-                                             where item.IsVersioned
-                                             select new Project(item)).ToArray();
+            IEnumerable<Project> projects = map
+                .Where(x => x.IsVersioned)
+                .Select(x => new Project(x))
+                .ToArray();
 
             foreach (var item in map)
             {
                 Project prj = projects.SingleOrDefault(o => o.Id == item.Id);
 
-                if (prj != null)
+                if (prj == null)
                 {
-                    prj.Dependencies = (from dep in projects
-                                        where item.ProjectReferences.Contains(dep.Name)
-                                        select dep)
-                                        .ToArray();
-
-                    foreach (var by in prj.Dependencies)
-                        by.AddDependsFrom(prj);
+                    continue;
                 }
+
+                prj.Dependencies = projects
+                    .Where(x => item.ProjectReferences.Contains(x.Name))
+                    .ToArray();
+
+                foreach (var by in prj.Dependencies)
+                    by.AddDependsFrom(prj);
             }
 
             return new Solution(name, projects);

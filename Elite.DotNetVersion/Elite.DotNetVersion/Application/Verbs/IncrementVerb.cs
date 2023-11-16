@@ -113,9 +113,9 @@ namespace Elite.DotNetVersion.Application.Verbs
 
         private void Save(IEnumerable<Project> projectsToChange)
         {
-            foreach (var prj in projectsToChange)
+            foreach (var project in projectsToChange)
             {
-                prj.CommitUpdatedVersionToFile();
+                project.CommitUpdatedVersionToFile();
             }
         }
 

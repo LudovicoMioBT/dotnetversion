@@ -56,7 +56,9 @@ namespace Elite.DotNetVersion.Domain.Entities
         private static (bool usesPrefix, Version version) GetVersion(string versionPrefix, string version)
         {
             if (string.IsNullOrEmpty(version) && string.IsNullOrEmpty(versionPrefix))
+            {
                 return (false, NotVersionedVersion);
+            }
 
             bool usesPrefix = !string.IsNullOrEmpty(versionPrefix);
             return (usesPrefix, new Version(usesPrefix ? versionPrefix : version));
