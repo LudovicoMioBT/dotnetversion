@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Elite.DotNetVersion": {
-      "commandName": "Project",
-      "commandLineArgs": "number -v 1.2.3.18000"
-    }
-  }
-}
