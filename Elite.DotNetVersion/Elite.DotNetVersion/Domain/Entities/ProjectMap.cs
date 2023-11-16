@@ -66,14 +66,13 @@ namespace Elite.DotNetVersion.Domain.Entities
 
         private static IEnumerable<string> ExtractProjects(IEnumerable<XElement> enumerable)
         {
-            return from item in enumerable
-                   select Path.GetFileNameWithoutExtension(item.Attribute("Include").Value);
+            return enumerable.Select(x => Path.GetFileNameWithoutExtension(x.Attribute("Include").Value));
         }
 
         private static IEnumerable<(string Name, string Version)> ExtractPackages(IEnumerable<XElement> enumerable)
         {
-            return from item in enumerable
-                   select (Name: item.Attribute("Include").Value, Version: item.Attribute("Version")?.Value ?? NotVersionedVersion.ToString());
+            return enumerable
+                   .Select(x => (Name: x.Attribute("Include").Value, Version: x.Attribute("Version")?.Value ?? NotVersionedVersion.ToString()));
         }
 
         public bool IsVersioned => Version != NotVersionedVersion;
